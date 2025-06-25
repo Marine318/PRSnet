@@ -1,0 +1,52 @@
+# 基础配置
+base:
+  name: 'exp'  
+  gpu_ids: '0'  
+  checkpoints_dir: './checkpoints'  
+  data_type: 32  
+  verbose: false  
+  activation: 'lrelu'  
+
+# 数据配置
+data:
+  dataroot: './data/shapenet/'  
+  batch_size: 32  
+  noshuffle: false  
+  num_threads: 2  
+  max_dataset_size: inf  
+
+# 模型配置
+model:
+  grid_bound: 0.5  
+  grid_size: 32  
+  input_nc: 1  
+  output_nc: 4  
+  conv_layers: 5  
+  num_plane: 3  
+  num_quat: 0  
+
+# 训练配置
+train:
+  display_freq: 1  
+  print_freq: 100  
+  save_latest_freq: 1000  
+  save_epoch_freq: 10  
+  save_best: true  
+  best_metric: 'total_loss'  
+  debug: false  
+  continue_train: false  
+  load_pretrain: ''  
+  which_epoch: 'latest'  
+  phase: 'train'  
+  niter: 100  
+  niter_decay: 100  
+  beta1: 0.9  
+  lr: 0.001  
+  weight: 25  
+  tf_log: false  
+
+# 测试配置
+test:
+  results_dir: './outputs/'  
+  phase: 'test'  
+  which_epoch: 'best'  
