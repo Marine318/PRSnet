@@ -8,10 +8,6 @@ class Visualizer:
     """可视化工具类，用于记录和显示训练过程"""
     
     def __init__(self, opt):
-        """初始化可视化器
-        Args:
-            opt: 配置选项
-        """
         self.tf_log = opt.tf_log
         self.name = opt.name
         self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
@@ -24,45 +20,26 @@ class Visualizer:
         self._init_log_file()
 
     def _init_log_file(self):
-        """初始化日志文件"""
         with open(self.log_name, "a") as log_file:
             log_file.write(
                 f'================ Training Loss ({time.strftime("%c")}) ================\n'
             )
 
     def _write_to_log(self, message):
-        """写入日志文件"""
         with open(self.log_name, "a") as log_file:
             log_file.write(f'{message}\n')
 
     def plot_current_errors(self, errors, step):
-        """记录当前误差到TensorBoard
-        Args:
-            errors: 误差字典
-            step: 当前步数
-        """
         if self.tf_log:
             for tag, value in errors.items():
                 if isinstance(value, (int, float)):
                     self.writer.add_scalar(tag, value, step)
 
     def log_histogram(self, tag, values, step, bins=1000):
-        """记录直方图数据到TensorBoard
-        Args:
-            tag: 数据标签
-            values: 数据值
-            step: 当前步数
-            bins: 直方图箱数
-        """
         if self.tf_log and values is not None:
             self.writer.add_histogram(tag, values, step, bins=bins)
 
     def plot_current_weights(self, net, step):
-        """记录当前网络权重到TensorBoard
-        Args:
-            net: 神经网络模型
-            step: 当前步数
-        """
         if not self.tf_log:
             return
             
