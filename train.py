@@ -18,20 +18,14 @@ def parse_args():
     return parser.parse_args()
 
 def main():
-    # 解析命令行参数
     args = parse_args()
-    
-    # 处理覆盖参数
     overrides = {}
     for override in args.overrides:
         key, value = override.split('=')
         overrides[key] = value
-    
-    # 加载配置
     config = Config(args.config, mode='train', overrides=overrides)
     config.print_config()
     
-    # 设置随机种子
     torch.manual_seed(1)
     torch.cuda.manual_seed(1)
     np.random.seed(1)
@@ -55,26 +49,21 @@ def main():
         start_epoch, epoch_iter = 1, 0
         best_metric = float('inf')
 
-    # 创建模型
     model = create_model(config)
     print(model)
 
-    # 创建数据加载器
     data_loader = DataLoader(config)
     dataset = data_loader.load_data()
     dataset_size = len(data_loader)
     print('Number of training images = %d' % dataset_size)
 
-    # 初始化训练状态
     total_steps = (start_epoch-1) * dataset_size + epoch_iter
     display_delta = total_steps % config.display_freq
     print_delta = total_steps % config.print_freq
     save_delta = total_steps % config.save_latest_freq
 
-    # 创建可视化器
     visualizer = Visualizer(config)
 
-    # 开始训练循环
     for epoch in range(start_epoch, config.niter + config.niter_decay + 1):
         epoch_start_time = time.time()
 
@@ -86,22 +75,17 @@ def main():
             total_steps += config.batch_size
             epoch_iter += config.batch_size
 
-            # 前向传播
             losses = model(data['voxel'], data['sample'], data['cp'])
             
-            # 处理损失
             losses = [torch.mean(x) if not isinstance(x, int) else x for x in losses]
             losses_dict = dict(zip(model.loss_names, losses))
 
-            # 计算总损失
             total_loss = sum(loss for loss in losses if not isinstance(loss, int))
 
-            # 反向传播
             model.optimizer_PRS.zero_grad()
             total_loss.backward()
             model.optimizer_PRS.step()
 
-            # 显示训练状态
             if total_steps % config.print_freq == print_delta:
                 errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in losses_dict.items()}
                 t = (time.time() - iter_start_time) / config.batch_size
@@ -130,19 +114,16 @@ def main():
             if epoch_iter >= dataset_size:
                 break
 
-        # 结束一个epoch
         iter_end_time = time.time()
         print('End of epoch %d / %d \t Time Taken: %d sec' %
               (epoch, config.niter + config.niter_decay, time.time() - epoch_start_time))
 
-        # 保存当前epoch的模型
         if epoch % config.save_epoch_freq == 0:
             print('Saving the model at the end of epoch %d, iters %d' % (epoch, total_steps))
             model.save('latest')
             model.save(epoch)
             np.savetxt(iter_path, (epoch+1, 0), delimiter=',', fmt='%d')
 
-        # 如果在debug模式下，只运行一个epoch
         if config.debug:
             break
 
