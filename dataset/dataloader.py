@@ -56,7 +56,13 @@ class PRSDataLoader(data.Dataset):
         try:
             sample_points = mat_data['surfaceSamples']
             volume_data = mat_data['Volume']
-            closest_points = mat_data['closestPoints']
+            
+            # 如果closestPoints为空，使用vertices作为替代
+            if 'closestPoints' in mat_data and mat_data['closestPoints'].size > 0:
+                closest_points = mat_data['closestPoints']
+            else:
+                closest_points = mat_data['vertices']
+            
         except KeyError as e:
             print(f"数据字段缺失 {data_path}: {str(e)}")
             return None

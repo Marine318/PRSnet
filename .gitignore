@@ -1,0 +1,40 @@
+# 忽略data目录下的所有内容
+data/*/
+data/**/*
+
+# 忽略results目录下的所有内容
+results/*/
+results/**/*
+
+# 保留data和results目录本身
+!data/.gitkeep
+!results/.gitkeep
+
+# Python相关文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE相关文件
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store 

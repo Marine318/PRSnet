@@ -23,7 +23,7 @@ model:
   output_nc: 4  
   conv_layers: 5  
   num_plane: 3  
-  num_quat: 0  
+  num_quat: 3  
 
 # 训练配置
 train:
